@@ -1,0 +1,60 @@
+
+
+/* Botão de adicionar */
+.btn-outline-success {
+  color: #70b77e;
+  border-color: #70b77e;
+}
+
+.btn-outline-success:hover {
+  background-color: #70b77e;
+  color: white;
+}
+
+/* Botão de remover */
+.btn-outline-danger {
+  color: #d94f30;
+  border-color: #d94f30;
+}
+
+.btn-outline-danger:hover {
+  background-color: #d94f30;
+  color: white;
+}
+
+/* Estilo geral do select */
+::ng-deep .ng-select {
+  border-radius: 8px;
+  border: 1px solid #b23c17; /* vinho queimado */
+  background-color: #fff;
+  min-height: 30px;
+  font-weight: 500;
+  color: #4a2c1d;
+}
+
+/* Setinha */
+::ng-deep .ng-select .ng-arrow {
+  color: #b23c17;
+}
+
+/* Itens do dropdown */
+::ng-deep .ng-dropdown-panel .ng-option {
+  background-color: #fff;
+  color: #4a2c1d;
+  font-weight: 500;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Hover dos itens do dropdown */
+::ng-deep .ng-dropdown-panel .ng-option:hover {
+  background-color: #ffd7b5; /* tom de laranja leve */
+  color: #000;
+}
+
+/* Item selecionado */
+::ng-deep .ng-select.ng-select-single .ng-select-container {
+  background-color: #fffdf9;
+}
+
+

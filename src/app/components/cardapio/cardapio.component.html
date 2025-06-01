@@ -1,0 +1,164 @@
+<div class="container my-4">
+  <!-- Linha do filtro -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <label class="form-label fw-bold">Selecione a categoria</label>
+      <ng-select
+        [items]="categorias"
+        [(ngModel)]=" categoriaSelecionada"
+        placeholder="Categorias - "
+        class="w-100">
+      </ng-select>
+    </div>
+  </div>
+
+  <!-- Linha dos cards -->
+ <div class="row g-4">
+  <div class="col-6 col-md-4 col-lg-3" *ngFor="let produto of produtosFiltrados">
+    <div class="card h-100 shadow-sm">
+      <img [src]="produto.imagem" class="card-img-top" [alt]="produto.nome" />
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">{{ produto.nome }}</h5>
+        <p class="text-muted small" *ngIf="produto.descricao">{{ produto.descricao }}</p>
+        <p class="card-text">R$ {{ produto.preco | number:'1.2-2' }}</p>
+        
+        <div class="mt-auto d-flex align-items-center justify-content-between">
+          <div class="btn-group">
+            <button class="btn btn-outline-danger" (click)="remover(produto)">-</button>
+            <span class="px-3">{{ produto.quantidade }}</span>
+            <button class="btn btn-outline-success" (click)="adicionar(produto)">+</button>
+          </div>
+        </div>
+
+        <p class="text-muted mt-2" *ngIf="produto.quantidade > 0">
+          Subtotal: R$ {{ produto.quantidade * produto.preco | number:'1.2-2' }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Total -->
+  <div class="mt-4 text-end">
+    <h4>Total: R$ {{ total | number:'1.2-2' }}</h4>
+  </div>
+
+  <!-- Formulário do cliente e botão de envio -->
+<div class="card p-3 shadow-sm mt-4">
+  <h5 class="mb-3">Seus dados</h5>
+
+  <!-- Nome -->
+  <form #formulario="ngForm" (ngSubmit)="enviarPedido()" novalidate>
+
+  <div class="mb-3">
+    <label for="nome" class="form-label">Nome</label>
+    <input id="nome" name="nome" type="text" class="form-control" required minlength="2"
+           [(ngModel)]="cliente.nome" #nome="ngModel">
+    <div class="text-danger" *ngIf="nome.invalid && nome.touched">
+      Nome é obrigatório (mínimo 2 letras).
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Tipo de Entrega</label>
+    <select class="form-select" [(ngModel)]="cliente.tipoEntrega" name="tipoEntrega" required #tipoEntrega="ngModel">
+      <option value="" disabled selected>Escolha uma opção</option>
+      <option value="Mesa">Mesa</option>
+      <option value="Entrega">Entrega</option>
+    </select>
+    <div class="text-danger" *ngIf="tipoEntrega.invalid && tipoEntrega.touched">
+      Selecione o tipo de entrega.
+    </div>
+  </div>
+
+  <!-- Mostrar campos se for Entrega -->
+  <div *ngIf="cliente.tipoEntrega === 'Entrega'">
+    <div class="mb-3">
+      <label class="form-label">Rua</label>
+      <input type="text" class="form-control" required [(ngModel)]="cliente.rua" name="rua" #rua="ngModel">
+      <div class="text-danger" *ngIf="rua.invalid && rua.touched">Informe a rua.</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Número</label>
+      <input type="text" class="form-control" required [(ngModel)]="cliente.numero" name="numero" #numero="ngModel">
+      <div class="text-danger" *ngIf="numero.invalid && numero.touched">Informe o número.</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Bairro</label>
+      <input type="text" class="form-control" required [(ngModel)]="cliente.bairro" name="bairro" #bairro="ngModel">
+      <div class="text-danger" *ngIf="bairro.invalid && bairro.touched">Informe o bairro.</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Ponto de referência</label>
+      <input type="text" class="form-control" [(ngModel)]="cliente.proximidade" name="proximidade">
+    </div>
+  </div>
+
+<div class="mb-3" *ngIf="cliente.tipoEntrega === 'Mesa'">
+  <label class="form-label">Número da Mesa</label>
+  <input type="text"
+         class="form-control"
+         required
+         pattern="^[0-9]+$"
+         [(ngModel)]="cliente.mesa"
+         name="mesa"
+         #mesa="ngModel"
+         (keypress)="permitirApenasNumeros($event)">
+         
+  <div class="text-danger" *ngIf="mesa.invalid && mesa.touched">
+    Informe o número da mesa.
+  </div>
+</div>
+
+  <!-- Tipo de pagamento (só se for entrega) -->
+  <div class="mb-3" *ngIf="cliente.tipoEntrega === 'Entrega'">
+    <label class="form-label">Tipo de pagamento</label>
+    <select class="form-select" [(ngModel)]="cliente.pagamento" name="pagamento" required #pagamento="ngModel">
+      <option value="" disabled selected>Escolha uma forma de pagamento</option>
+      <option value="Crédito">Cartão de Crédito</option>
+      <option value="Débito">Cartão de Débito</option>
+      <option value="PIX">PIX</option>
+      <option value="Dinheiro">Dinheiro</option>
+    </select>
+    <div class="text-danger" *ngIf="pagamento.invalid && pagamento.touched">
+      Selecione a forma de pagamento.
+    </div>
+
+    <!-- Campo de Troco se for Dinheiro -->
+<div class="mb-3" *ngIf="cliente.pagamento === 'Dinheiro'">
+  <label class="form-label">Troco para:</label>
+  <input
+    type="number"
+    class="form-control"
+    [(ngModel)]="cliente.trocoPara"
+    name="trocoPara"
+    min="{{ total }}"
+    placeholder="Informe o valor se precisar de troco"
+    #trocoPara="ngModel"
+  />
+
+  <!-- Validação visual -->
+  <div class="text-danger" *ngIf="cliente.trocoPara && cliente.trocoPara < total">
+    O valor deve ser maior ou igual ao total do pedido (R$ {{ total | number:'1.2-2' }}).
+  </div>
+
+  <!-- Mostrar troco estimado -->
+  <small class="text-muted" *ngIf="cliente.trocoPara && cliente.trocoPara >= total">
+    Troco estimado: R$ {{ cliente.trocoPara - total | number:'1.2-2' }}
+  </small>
+</div>
+
+  </div>
+
+  <button type="submit" class="btn btn-success w-100" [disabled]="formulario.invalid">
+    📦 Enviar Pedido via WhatsApp
+  </button>
+</form>
+
+</div>
+
+
+</div>

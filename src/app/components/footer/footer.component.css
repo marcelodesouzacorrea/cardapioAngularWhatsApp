@@ -1,0 +1,18 @@
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ffc107;
+}
+
+@media (max-width: 768px) {
+  footer h5 {
+    font-size: 1.1rem;
+  }
+
+  footer p,
+  footer small {
+    font-size: 0.85rem;
+  }
+}
