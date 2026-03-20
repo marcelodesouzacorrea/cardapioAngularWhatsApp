@@ -64,7 +64,7 @@
     <select class="form-select" [(ngModel)]="cliente.tipoEntrega" name="tipoEntrega" required #tipoEntrega="ngModel">
       <option value="" disabled selected>Escolha uma opção</option>
       <option value="Mesa">Mesa</option>
-      <option value="Entrega">Entrega</option>
+      <option value="Entrega">Delivery</option>
     </select>
     <div class="text-danger" *ngIf="tipoEntrega.invalid && tipoEntrega.touched">
       Selecione o tipo de entrega.
